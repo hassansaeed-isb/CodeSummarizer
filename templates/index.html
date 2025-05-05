@@ -3,16 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeT5 Evaluation Dashboard</title>
+    <title>Evaluation Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #f4f7fc;
+            font-family: Arial, sans-serif;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .table td {
+            text-align: center;
+        }
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+        .gap-warning {
+            color: orange;
+        }
+        .gap-danger {
+            color: red;
+        }
+        .gap-success {
+            color: green;
+        }
+        .list-group-item {
+            border-radius: 0.375rem;
+        }
+        .list-group-item-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .list-group-item-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .chart-container {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="/">CodeT5 Evaluation Project</a>
+            <a class="navbar-brand" href="/">Evaluation Project</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -38,16 +81,14 @@
     <div class="container mt-4">
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4>Analyzing the Limitations of AI-based Code Documentation</h4>
+                <div class="card shadow-sm">
+                    <div class="card-header text-center">
+                        <h4>Evaluating Human Documentation</h4>
                     </div>
                     <div class="card-body">
                         <h5>Research Project Dashboard</h5>
                         <p>This interactive dashboard showcases the results from our research on the limitations 
-                        of AI-based code documentation tools like CodeT5 in capturing business logic and domain context.</p>
-                        <p>Our study evaluates CodeT5, a state-of-the-art model for code documentation, finding that while it achieves 
-                        high accuracy on technical details, it significantly underperforms when capturing business logic and safety implications.</p>
+                        of AI-based code documentation tools. Our study highlights that while AI models perform well in capturing technical details, they struggle with understanding complex business logic and domain-specific terminology.</p>
                     </div>
                 </div>
             </div>
@@ -55,49 +96,34 @@
 
         <div class="row mb-4">
             <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5>CodeT5 Performance</h5>
-                    </div>
-                    <div class="card-body d-flex flex-column">
-                        <div class="chart-container">
-                            <canvas id="performanceChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card h-100">
+                <div class="card shadow-sm">
                     <div class="card-header">
                         <h5>Key Findings</h5>
                     </div>
                     <div class="card-body">
                         <div id="keyFindings" class="list-group">
-                            <!-- Key findings will be loaded here -->
+                            <!-- Key findings will be dynamically loaded here -->
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
                     <div class="card-header">
                         <h5>Model Comparison</h5>
                     </div>
                     <div class="card-body">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
                                     <th>Documentation Aspect</th>
                                     <th>Human Documentation</th>
-                                    <th>CodeT5 (AI)</th>
                                     <th>Gap</th>
                                 </tr>
                             </thead>
                             <tbody id="comparisonTable">
-                                <!-- Comparison data will be loaded here -->
+                                <!-- Comparison data will be dynamically loaded here -->
                             </tbody>
                         </table>
                     </div>
@@ -110,11 +136,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5>CodeT5 Evaluation Project</h5>
+                    <h5>Evaluation Project</h5>
                     <p>Research on AI-based Code Documentation Limitations</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p>Based on the paper: "Analyzing the Limitations of AI-based Code Documentation in Capturing Business Logic"</p>
+                    <p>Based on the research on AI's ability to capture business logic in code documentation.</p>
                 </div>
             </div>
         </div>
@@ -131,8 +157,6 @@
                     
                     // Populate key findings
                     const keyFindings = document.getElementById('keyFindings');
-                    
-                    // Clear existing content
                     keyFindings.innerHTML = '';
                     
                     // Add strengths
@@ -153,27 +177,25 @@
                     
                     // Populate comparison table
                     const comparisonTable = document.getElementById('comparisonTable');
-                    
-                    // Clear existing content
                     comparisonTable.innerHTML = '';
                     
                     // Define the documentation aspects for comparison
                     const aspects = [
-                        { name: 'Technical Details', human: 0.99, ai: data.reference_metrics.business_logic_capture.technical_accuracy },
-                        { name: 'Business Logic', human: 0.98, ai: data.reference_metrics.business_logic_capture.business_context },
-                        { name: 'Safety Implications', human: 0.95, ai: data.reference_metrics.business_logic_capture.safety_implications },
-                        { name: 'Domain Terminology', human: 0.92, ai: data.reference_metrics.business_logic_capture.domain_terminology }
+                        { name: 'Technical Details', human: data.human_performance.technical_details },
+                        { name: 'Business Logic', human: data.human_performance.business_logic },
+                        { name: 'Safety Implications', human: data.human_performance.safety_implications },
+                        { name: 'Domain Terminology', human: data.human_performance.domain_terminology }
                     ];
                     
                     // Add rows to the table
                     aspects.forEach(aspect => {
-                        const gap = aspect.human - aspect.ai;
+                        const gap = 100 - (aspect.human * 100);
                         const row = document.createElement('tr');
+                        const gapClass = gap > 50 ? 'gap-danger' : (gap > 20 ? 'gap-warning' : 'gap-success');
                         row.innerHTML = `
                             <td>${aspect.name}</td>
                             <td>${(aspect.human * 100).toFixed(1)}%</td>
-                            <td>${(aspect.ai * 100).toFixed(1)}%</td>
-                            <td class="${gap > 0.5 ? 'text-danger' : gap > 0.2 ? 'text-warning' : 'text-success'}">${(gap * 100).toFixed(1)}%</td>
+                            <td class="${gapClass}">${gap.toFixed(1)}%</td>
                         `;
                         comparisonTable.appendChild(row);
                     });
@@ -185,47 +207,12 @@
             // Create performance chart
             axios.get('/api/plot/performance')
                 .then(function(response) {
-                    const data = {
-                        labels: ['Technical Details', 'Business Logic', 'Safety Implications', 'Domain Terminology'],
-                        datasets: [
-                            {
-                                label: 'Accuracy',
-                                data: [0.87, 0.41, 0.39, 0.45],
-                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }
-                        ]
-                    };
+                    const data = response.data;
+                    const plotUrl = data.plot_url;
                     
-                    const ctx = document.getElementById('performanceChart').getContext('2d');
-                    const chart = new Chart(ctx, {
-                        type: 'bar',
-                        data: data,
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 1.0,
-                                    ticks: {
-                                        callback: function(value) {
-                                            return value * 100 + '%';
-                                        }
-                                    }
-                                }
-                            },
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return context.dataset.label + ': ' + (context.raw * 100).toFixed(1) + '%';
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
+                    // Display the plot image in the dashboard
+                    const performanceChart = document.getElementById('performanceChart');
+                    performanceChart.innerHTML = `<img src="data:image/png;base64,${plotUrl}" class="img-fluid">`;
                 })
                 .catch(function(error) {
                     console.error('Error creating performance chart:', error);
